@@ -16,7 +16,7 @@ const bookSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: [true,'userId is required'],
         trim: true,
-        refs: 'user'
+        refs: 'User'
     },
     ISBN: {
         type: String,

@@ -38,6 +38,9 @@ const isValidPincode = ( pincode ) => {
     return /^[1-9][0-9]{5}$/.test(pincode)
 }
 
+const isValidISBN = ( ISBN ) => {
+    return /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(ISBN)
+}
 
 
 
@@ -48,5 +51,6 @@ module.exports = {
     isValidPhone,
     isValidPincode,
     isValidObjectId,
-    isValidEmail
+    isValidEmail,
+    isValidISBN
 }

@@ -4,7 +4,8 @@ const validate = require('../validator/validators')
 const jwt = require('jsonwebtoken')
 
 
-// USER CREATATION 
+////       USER CREATION     /////
+
 const createUser = async function (req, res) {
     let requestBody = req.body;
     try {
