@@ -13,7 +13,7 @@ const createUser = async function (req, res) {
             return
         }
 
-        const { title,name, phone, email,  password,address } = requestBody
+        const { title, name, phone, email, password, address } = requestBody
 
         if (!validate.isValid(title)) {
             res.status(400).send({ status: false, message: 'Title is required' })
