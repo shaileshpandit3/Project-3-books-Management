@@ -1,5 +1,6 @@
 
 const userModel = require('../models/userModel')
+const validate = require('../validator/validators')
 
 
 // USER CREATATION 
@@ -7,33 +8,33 @@ const createUser = async function (req, res) {
     let requestBody = req.body;
     try {
 
-        if (!isValidRequestBody(requestBody)) {
-            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide author details' })
+        if (!validate.isValidRequestBody(requestBody)) {
+            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide user details' })
             return
         }
 
-        const { name, title, email, phone, password } = requestBody
+        const { title,name, phone, email,  password,address } = requestBody
 
-        if (!isValid(title)) {
+        if (!validate.isValid(title)) {
             res.status(400).send({ status: false, message: 'Title is required' })
             return
         }
-        if (!isValidTitle(title)) {
+        if (!validate.isValidTitle(title)) {
             res.status(400).send({ status: false, message: `Title should be among Mr, Mrs, Miss ` })
             return
         }
 
-        if (!isValid(name)) {
+        if (!validate.isValid(name)) {
             res.status(400).send({ status: false, message: 'name is required' })
             return
         }
-        if (!isValid(phone)) {
+        if (!validate.isValid(phone)) {
             res.status(400).send({ status: false, message: 'phone number is required' })
             return
         }
-
-        if (!(/^[6-9]\d{9}$/gi.test(phone))) {
-            res.status(400).send({ status: false, message: `phone number should be valid number` })
+        if (!validate.isValidPhone(phone)){
+            res.status(400).send({status:false,message:'phone number is not valid'})
+            return
         }
         const isPhoneAlreadyUsed = await userModel.findOne({ phone });
 
@@ -46,23 +47,24 @@ const createUser = async function (req, res) {
             return
         }
 
-        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
+        if(!validate.isValidEmail(email)) {
             res.status(400).send({ status: false, message: `Email should be a valid email address` })
             return
-        }
-        if (!isValid(password)) {
-            res.status(400).send({ status: false, message: `Password is required` })
-            return
-        }
-        if (!(/[a-zA-Z0-9@]{8,15}/.test(password))) {
-            res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
 
         const isEmailAlreadyUsed = await userModel.findOne({ email });
 
         if (isEmailAlreadyUsed) {
-            res.status(400).send({ status: false, message: `${email} email address is already registered` })
+            res.status(400).send({ status: false, message: `${email}  is already registered` })
             return
+        }
+
+        if (!validate.isValid(password)) {
+            res.status(400).send({ status: false, message: `Password is required` })
+            return
+        }
+        if (!(/[a-zA-Z0-9@]{8,15}/.test(password))) {
+            res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
 
         let user = await userModel.create(req.body)
@@ -71,3 +73,6 @@ const createUser = async function (req, res) {
         res.status(500).send({ status: false, msg: error.message })
     }
 }
+
+module.exports.createUser = createUser
+
