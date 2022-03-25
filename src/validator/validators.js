@@ -43,7 +43,6 @@ const isValidISBN = ( ISBN ) => {
 }
 
 
-
 module.exports = {
     isValid,
     isValidRequestBody,

@@ -34,11 +34,11 @@ try {
     }
     
     if(!validate.isValidISBN(ISBN)) {
-        return res.status(400).send({ status : fasle, message : "Invalid ISBN Enterd" })
+        return res.status(400).send({ status : false, message : "Invalid ISBN Enterd" })
     }
 
     if(!validate.isValid(category)) {
-        return res.status(400).send({ status : fasle, message : "Category Is Required" })
+        return res.status(400).send({ status : false, message : "Category Is Required" })
     }
 
     if(!validate.isValid(subcategory)) {
