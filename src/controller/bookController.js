@@ -23,12 +23,15 @@ try {
         return res.status(400).send({ status: false , message : "Excerpt Is Requird" })
     }
 
+    if(!validate.isValid(userId)) {
+        return res.status(400).send({ status : false, message : "User Id required!" })
+    }
+
     if(!validate.isValidObjectId(userId)) {
         return res.status(400).send({ status : false, message : "Invalid User Id!" })
     }
 
     const ifUserExist = await userModel.findById(userId)
-
     if(!ifUserExist) {
         return res.status(404).send({ status : false, message : "User Not Found, Please Check User Id" })
     }
