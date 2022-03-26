@@ -38,8 +38,9 @@ const createUser = async function (req, res) {
             res.status(400).send({status:false,message:'phone number is not valid'})
             return
         }
-        const isPhoneAlreadyUsed = await userModel.findOne({ phone }); //mobile+91
-
+        let withoutCountryCode = phone.substring(3)
+        let withCountryCode = '+91'+ phone
+        const isPhoneAlreadyUsed = await userModel.findOne({  phone: { $in: [phone, withoutCountryCode, withCountryCode] }}); 
         if (isPhoneAlreadyUsed) {
             res.status(400).send({ status: false, message: `${phone}  is already registered` })
             return
@@ -98,7 +99,7 @@ const loginUser = async function (req, res) {
 
         let token = jwt.sign({userId: user._id.toString() }, "Stack",{
             expiresIn : "1800s"
-        }, "group2"); // exp
+        }, "group2"); 
         return res.status(201).send({ status: true, data: token });
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message })
