@@ -3,6 +3,7 @@
 const bookModel = require('../models/bookModel')
 const userModel = require('../models/userModel')
 const validate = require('../validator/validators')
+const reviewModel = require('../models/reviewModel')
 
 const createBook = async (req, res) => {
 
@@ -67,6 +68,10 @@ const createBook = async (req, res) => {
 
 };
 
+module.exports.createBook = createBook
+
+//===========================================================================================
+
 
 const getBook = async function (req, res) {
     try {
@@ -109,6 +114,51 @@ const getBook = async function (req, res) {
     }
 }
 
-
-module.exports.createBook = createBook
 module.exports.getBook = getBook
+
+
+// ================================================================================================
+
+
+
+const getBookWithreview = async (req, res) => {
+
+    try {
+
+        let tempbook = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
+
+        if (tempbook) {
+
+            let reviews = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false })
+            let reviewCount = reviews.length
+
+            if (reviews.length > 0) {
+
+                tempbook.reviews = reviewCount
+                res.status(200).send({
+                    status: true, data: {
+                        ...tempbook.toObject(), reviewData: reviews
+                    }
+                })
+
+            } else {
+                res.status(200).send({
+                    status: true, data: {
+                        ...tempbook.toObject(), reviewData: reviews
+                    }
+                })
+            }
+        } else {
+            res.status(404).send({ status: false, msg: "book not exist" })
+
+        }
+
+    } catch (err) {
+
+        console.log(err)
+        res.status(500).send({ status: false, error: err.message })
+    }
+}
+
+
+module.exports.getBookWithreview = getBookWithreview
