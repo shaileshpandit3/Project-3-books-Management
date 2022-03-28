@@ -19,4 +19,6 @@ router.post('/books', bookController.createBook)
 router.get('/books', bookController.getBook)
 
 router.post('/books/:bookId/review', reviewContoller.addReview)
+router.delete('/books/:bookId',bookController.deletedById)
+
 module.exports = router;

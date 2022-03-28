@@ -3,7 +3,9 @@
 const bookModel = require('../models/bookModel')
 const userModel = require('../models/userModel')
 const validate = require('../validator/validators')
-const reviewModel = require('../models/reviewModel')
+
+
+/////////       CREATE BOOK      /////////////////////////////////
 
 const createBook = async (req, res) => {
 
@@ -73,6 +75,9 @@ module.exports.createBook = createBook
 //===========================================================================================
 
 
+////////////            GET BOOK DETAILS           /////////////////
+
+
 const getBook = async function (req, res) {
     try {
         if (Object.keys(req.query).length == 0) {
@@ -83,7 +88,7 @@ const getBook = async function (req, res) {
                     if (a.title > b.title) return 1
                     if (a.title = b.title) return 0
                 })
-                return res.status(200).send({ status: true, data: result })
+                return res.status(200).send({ status: true, msg: "Booklist", data: result })
             }
             return res.status(404).send({ status: false, msg: "No book found" })
         }
@@ -121,10 +126,17 @@ module.exports.getBook = getBook
 // ================================================================================================
 
 
+/////////////        GET  BOOK DETAILS WITH REVIEW        ////////////////////
+
+
 
 const getBookWithreview = async ( req, res ) => {
 
     try {
+
+        if (!(isValid(req.params.bookId) && isValidObjectId(req.params.bookId))) {
+            return res.status(400).send({ status: false, msg: "bookId is not valid" })
+        }
 
         let tempbook = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
 
@@ -156,6 +168,45 @@ const getBookWithreview = async ( req, res ) => {
         res.status(500).send({ status: false, error: err.message })
     }
 }
-
-
 module.exports.getBookWithreview = getBookWithreview
+
+
+////////////   BOOK DELETED BY ID    //////////////////////
+
+
+const deletedById = async function (req,res){
+    try{
+        if(!validate.isValid(req.params.bookId) && !validate.isValidObjectId(req.params.bookId)){
+            return res.status(400).send({status:false,msg:"Book is is not deleted"})
+        }
+
+        let filterDetails = {
+            isDeleted:false,
+            _id:req.params.bookId,
+            userId:req.decodeToken._id
+        }
+
+        const book = await bookModel.findOne({_id:req.params.bookId, isDeleted:false})
+
+        if(!validate.book){
+            return res.status(404).send({status:false,msg: 'Book not found'})
+        }
+
+        if(book.userId.toString() !== req.decodeToken._id){
+            return res.status(403).send({satus:false,msg:`Unauthorized access! Owner info doesn't match`})
+
+        }
+
+        const deletedBook = await bookModel.findOneAndUpdate(filterDetails,{isDeleted : true, deletedAt: new Date()})
+
+        if(deletedBook){
+            return res.satus(200).send({status:false, msg:'Book is successfully deleted'})
+        }
+
+    }catch(err){
+        console.log(err)
+        res.status(500).send({satus:false,err:err.message})
+    }
+}
+
+module.exports.deletedById=deletedById
