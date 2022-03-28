@@ -42,6 +42,10 @@ const isValidISBN = ( ISBN ) => {
     return /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(ISBN)
 }
 
+// const isAllLetters = (val) => {
+//     return /^[A-Za-z]+$/.test(val)
+// }
+
 
 module.exports = {
     isValid,
@@ -51,5 +55,6 @@ module.exports = {
     isValidPincode,
     isValidObjectId,
     isValidEmail,
-    isValidISBN
+    isValidISBN,
+    // isAllLetters
 }
