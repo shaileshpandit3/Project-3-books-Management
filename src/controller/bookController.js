@@ -174,9 +174,6 @@ let updateBook = async function (req, res) {
         if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Please enter data to update" })
         }
-        if (book.userId.toString() !== req.loggedInUser) {
-            return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
-        }
         let bookKeys = ["title", "excerpt", "release date", "ISBN"]
         for (let i = 0; i < Object.keys(req.body).length; i++) {
             let keyPresent = bookKeys.includes(Object.keys(req.body)[i])
@@ -212,13 +209,15 @@ let updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: " Please enter date in YYYY-MM-DD" })
             }
         }
-
         let updatedBook = await bookModel.findOneAndUpdate(
             { _id: book_id, isDeleted: false },
             { $set: req.body },
             { new: true });
         if (!updatedBook)
             res.status(404).send({ status: false, msg: "No book found" })
+        if (updatedBook.userId.toString() !== req.loggedInUser) {
+            return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
+        }
         return res.status(200).send({ status: true, message: "success", data: updatedBook });
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message })
