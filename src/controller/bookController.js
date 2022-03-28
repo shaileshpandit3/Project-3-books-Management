@@ -83,7 +83,7 @@ const getBook = async function (req, res) {
         if (Object.keys(req.query).length == 0) {
             let result = await bookModel.find({ isDeleted: false }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 })
             if (result.length != 0) {
-                result.sort(function (a, b) {
+                result.sort(function ( a, b ) {
                     if (a.title < b.title) return -1
                     if (a.title > b.title) return 1
                     if (a.title = b.title) return 0
@@ -94,6 +94,7 @@ const getBook = async function (req, res) {
         }
 
         let bookKeys = ["userId", "category", "subCategory"]
+        console.log( bookKeys )
         for (let i = 0; i < Object.keys(req.query).length; i++) {
             let keyPresent = bookKeys.includes(Object.keys(req.query)[i])
             if (!keyPresent)
@@ -129,7 +130,7 @@ module.exports.getBook = getBook
 
 
 
-const getBookWithreview = async (req, res) => {
+const getBookWithreview = async ( req, res ) => {
 
     try {
 
@@ -144,20 +145,16 @@ const getBookWithreview = async (req, res) => {
             let reviews = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false })
             let reviewCount = reviews.length
 
-            if (reviews.length > 0) {
+            if(reviews.length > 0) {
 
                 tempbook.reviews = reviewCount
                 res.status(200).send({
-                    status: true, data: {
-                        ...tempbook.toObject(), reviewData: reviews
-                    }
+                    status: true, data: {...tempbook.toObject(), reviewData: reviews }
                 })
 
-            } else {
+            }else {
                 res.status(200).send({
-                    status: true, data: {
-                        ...tempbook.toObject(), reviewData: reviews
-                    }
+                    status: true, data: {...tempbook.toObject(), reviewData: reviews }
                 })
             }
         } else {
