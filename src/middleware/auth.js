@@ -7,7 +7,7 @@ const mid = function (req, res, next) {
             res.status(401).send({ status: false, msg: 'Token not present in the header' })
             return
         } else {
-            let decodeToken = jwt.verify(token, 'Project-Books')
+            let decodeToken = jwt.verify(token, 'Group-2')
             if (decodeToken) {
                 req.decodeToken = decodeToken
                 next()

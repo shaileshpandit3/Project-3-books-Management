@@ -85,6 +85,8 @@ const createUser = async function (req, res) {
     }
 }
 
+//////  USER LOGIN  /////////////
+
 
 const loginUser = async function (req, res) {
     try {
