@@ -225,3 +225,43 @@ let updateBook = async function (req, res) {
 }
 
 module.exports.updateBook = updateBook
+
+////////////   BOOK DELETED BY ID    //////////////////////
+
+
+const deletedById = async function (req,res){
+    try{
+        if(!validate.isValid(req.params.bookId) && !validate.isValidObjectId(req.params.bookId)){
+            return res.status(400).send({status:false,msg:"Book is is not deleted"})
+        }
+
+        let filterDetails = {
+            isDeleted:false,
+            _id:req.params.bookId,
+            userId:req.decodeToken._id
+        }
+
+        const book = await bookModel.findOne({_id:req.params.bookId, isDeleted:false})
+
+        if(!validate.book){
+            return res.status(404).send({status:false,msg: 'Book not found'})
+        }
+
+        if(book.userId.toString() !== req.decodeToken._id){
+            return res.status(403).send({satus:false,msg:`Unauthorized access! Owner info doesn't match`})
+
+        }
+
+        const deletedBook = await bookModel.findOneAndUpdate(filterDetails,{isDeleted : true, deletedAt: new Date()})
+
+        if(deletedBook){
+            return res.satus(200).send({status:false, msg:'Book is successfully deleted'})
+        }
+
+    }catch(err){
+        console.log(err)
+        res.status(500).send({satus:false,err:err.message})
+    }
+}
+
+module.exports.deletedById=deletedById
