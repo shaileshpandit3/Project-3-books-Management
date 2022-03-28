@@ -99,8 +99,8 @@ const loginUser = async function (req, res) {
         if (!user)
             return res.status(400).send({ status: false, msg: "Username or the password is not corerct" });
 
-        let token = jwt.sign({userId: user._id.toString() }, "Stack",{
-            expiresIn : "1800s"
+        let token = jwt.sign({userId: user._id.toString() },{
+            expiresIn : "60s"
         }, "group2"); 
         return res.status(201).send({ status: true, data: token });
     } catch (error) {
