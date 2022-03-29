@@ -13,6 +13,8 @@ const middleware = require('../middleware/auth')
 
 router.post('/register', userController.createUser)
 
+// post for login user 
+
 router.post('/login', userController.loginUser)
 
 router.post('/books', middleware.mid, bookController.createBook)
@@ -26,5 +28,9 @@ router.put('/books/:bookId', middleware.mid, bookController.updateBook)
 router.post('/books/:bookId/review', middleware.mid,reviewContoller.addReview)
 
 router.delete('/books/:bookId',middleware.mid,bookController.deletedById)
+
+router.delete('/books/:bookId/review/:reviewId',reviewContoller.deleteReview)
+
+router.put('/books/:bookId/review/:reviewId',reviewContoller.updateReview)
 
 module.exports = router;
