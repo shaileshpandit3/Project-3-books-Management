@@ -13,11 +13,15 @@ const middleware = require('../middleware/auth')
 
 router.post('/register', userController.createUser)
 
+// post for login user 
+
 router.post('/login', userController.loginUser)
 
 router.post('/books', middleware.mid, bookController.createBook)
 
 router.get('/books', middleware.mid, bookController.getBook)
+
+router.get('/books/:bookId',bookController.getBookWithreview)
 
 router.put('/books/:bookId', middleware.mid, bookController.updateBook)
 
