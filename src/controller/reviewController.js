@@ -175,5 +175,3 @@ try {
 }   
 module.exports.updateReview = updateReview
 
-
-// { reviewedBy: reviewedBy, rating: rating, review: review }
