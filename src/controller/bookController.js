@@ -17,13 +17,15 @@ const createBook = async (req, res) => {
         if (!validate.isValidRequestBody(bookData)) {
             return res.status(400).send({ status: false, message: "Invalid Parameters" })
         }
-
-        const { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt } = req.body
+        let { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt } = req.body
         if (!validate.isValid(title)) {
             return res.status(400).send({ status: false, message: "title Is Required" })
         }
+        if (userId.toString() !== req.loggedInUser) {
+            return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
+        }
         const duplicateTitle = await bookModel.findOne({ title: req.body.title })
-        if (duplicateTitle){
+        if (duplicateTitle) {
             return res.status(400).send({ status: false, message: "title is already present" })
         }
         if (!validate.isValid(excerpt)) {
@@ -42,10 +44,10 @@ const createBook = async (req, res) => {
         if (!validate.isValidISBN(ISBN)) {
             return res.status(400).send({ status: false, message: "Invalid ISBN Enterd" })
         }
-        const duplicateISBN = await bookModel.findOne({ title: req.body.ISBN})
-            if (duplicateISBN){
-                return res.status(400).send({ status: false, message: "ISBN is already present" })
-            }
+        const duplicateISBN = await bookModel.findOne({ ISBN: req.body.ISBN })
+        if (duplicateISBN) {
+            return res.status(400).send({ status: false, message: "ISBN is already present" })
+        }
         if (!validate.isValid(category)) {
             return res.status(400).send({ status: false, message: "Category Is Required" })
         }
@@ -54,16 +56,15 @@ const createBook = async (req, res) => {
         }
         if (reviews) {
             if (typeof reviews !== 'number') {
-                return res.status(400).send({ status: false, message: "Unexpected Input" })
+                return res.status(400).send({ status: false, message: " Reviews - Unexpected Input" })
             }
         }
-        if (!(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(releasedAt))) {
+        if (!(/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt))) {
             return res.status(400).send({ status: false, message: " Please enter date in YYYY-MM-DD" })
         }
         if (req.body.isDeleted === true) {
             return res.status(400).send({ status: false, message: "No Data Should Be Deleted At The Time Of Creation" })
         }
-
         const newBook = await bookModel.create(bookData)
         return res.status(201).send({ status: true, message: "Success", Data: newBook })
 
@@ -140,10 +141,8 @@ const getBookWithreview = async (req, res) => {
         if (!(validate.isValid(req.params.bookId) && !validate.isValidObjectId(req.params.bookId))) {
             return res.status(400).send({ status: false, msg: "bookId is not valid" })
         }
-
         let tempbook = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
         if (tempbook) {
-
             let reviews = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false })
             let reviewCount = reviews.length
             if (reviewCount > 0) {
@@ -155,12 +154,8 @@ const getBookWithreview = async (req, res) => {
             return res.status(200).send({
                 status: true, message: 'Book list', data: { ...tempbook.toObject(), reviewData: reviews }
             })
-
         }
         return res.status(404).send({ status: false, msg: "book not exist" })
-
-
-
     } catch (err) {
         return res.status(500).send({ status: false, error: err.message })
     }
@@ -205,7 +200,7 @@ let updateBook = async function (req, res) {
             if (!validate.isValidISBN(req.body.ISBN)) {
                 return res.status(400).send({ status: false, message: "Invalid ISBN Enterd" })
             }
-            const duplicateISBN = await bookModel.findOne({ title: req.body.ISBN})
+            const duplicateISBN = await bookModel.findOne({ title: req.body.ISBN })
             if (duplicateISBN)
                 return res.status(400).send({ status: false, message: "ISBN is already present" })
         }
@@ -214,13 +209,15 @@ let updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: " Please enter date in YYYY-MM-DD" })
             }
         }
-
         let updatedBook = await bookModel.findOneAndUpdate(
             { _id: book_id, isDeleted: false },
             { $set: req.body },
             { new: true });
         if (!updatedBook)
             res.status(404).send({ status: false, msg: "No book found" })
+        if (updatedBook.userId.toString() !== req.loggedInUser) {
+            return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
+        }
         return res.status(200).send({ status: true, message: "success", data: updatedBook });
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message })
@@ -232,39 +229,38 @@ module.exports.updateBook = updateBook
 ////////////   BOOK DELETED BY ID    //////////////////////
 
 
-const deletedById = async function (req,res){
-    try{
-        if(!validate.isValid(req.params.bookId) && !validate.isValidObjectId(req.params.bookId)){
-            return res.status(400).send({status:false,msg:"Book is is not deleted"})
+const deletedById = async function (req, res) {
+    try {
+        if (!validate.isValid(req.params.bookId) && !validate.isValidObjectId(req.params.bookId)) {
+            return res.status(400).send({ status: false, msg: "Book is is not deleted" })
         }
 
         let filterDetails = {
-            isDeleted:false,
-            _id:req.params.bookId,
-            userId:req.decodeToken._id
+            isDeleted: false,
+            _id: req.params.bookId
         }
 
-        const book = await bookModel.findOne({_id:req.params.bookId, isDeleted:false})
+        const book = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
 
-        if(!validate.book){
-            return res.status(404).send({status:false,msg: 'Book not found'})
+        if (!book) {
+            return res.status(404).send({ status: false, msg: 'Book not found' })
         }
 
-        if(book.userId.toString() !== req.decodeToken._id){
-            return res.status(403).send({satus:false,msg:`Unauthorized access! Owner info doesn't match`})
+        if (book.userId.toString() !== req.loggedInUser) {
+            return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
 
         }
 
-        const deletedBook = await bookModel.findOneAndUpdate(filterDetails,{isDeleted : true, deletedAt: new Date()})
+        const deletedBook = await bookModel.findOneAndUpdate(filterDetails, { isDeleted: true, deletedAt: new Date() })
 
-        if(deletedBook){
-            return res.satus(200).send({status:false, msg:'Book is successfully deleted'})
+        if (deletedBook) {
+            return res.status(200).send({ status: true, msg: 'Book is successfully deleted' })
         }
 
-    }catch(err){
+    } catch (err) {
         console.log(err)
-        res.status(500).send({satus:false,err:err.message})
+        res.status(500).send({ satus: false, err: err.message })
     }
 }
 
-module.exports.deletedById=deletedById
+module.exports.deletedById = deletedById
