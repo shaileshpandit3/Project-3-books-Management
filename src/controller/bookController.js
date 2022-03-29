@@ -5,7 +5,7 @@ const userModel = require('../models/userModel')
 const validate = require('../validator/validators')
 const reviewModel = require('../models/reviewModel')
 const { default: mongoose } = require('mongoose')
-const ObjectId = mongoose.Types.ObjectId
+
 
 
 /////////       CREATE BOOK      //////////
@@ -133,7 +133,7 @@ const getBook = async function (req, res) {
 const getBookWithreview = async (req, res) => {
 
     try {
-        if (!validate.isValidObjectId(req.params.bookId)) {
+        if (!validate.isValidObjectId( req.params.bookId )) {
             return res.status(400).send({ status: false, msg: "bookId is not valid" })
         }
         let tempbook = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
