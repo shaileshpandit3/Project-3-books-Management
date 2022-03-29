@@ -15,7 +15,7 @@ const createUser = async function (req, res) {
             return
         }
 
-        const { title,name, phone, email,  password, address } = requestBody
+        const { title, name, phone, email, password, address } = requestBody
 
         if (!validate.isValid(title)) {
             res.status(400).send({ status: false, message: 'Title is required' })
@@ -34,13 +34,13 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, message: 'phone number is required' })
             return
         }
-        if (!validate.isValidPhone(phone)){
-            res.status(400).send({status:false,message:'phone number is not valid'})
+        if (!validate.isValidPhone(phone)) {
+            res.status(400).send({ status: false, message: 'phone number is not valid' })
             return
         }
         let withoutCountryCode = phone.substring(3)
-        let withCountryCode = '+91'+ phone
-        const isPhoneAlreadyUsed = await userModel.findOne({  phone: { $in: [phone, withoutCountryCode, withCountryCode] }}); 
+        let withCountryCode = '+91' + phone
+        const isPhoneAlreadyUsed = await userModel.findOne({ phone: { $in: [phone, withoutCountryCode, withCountryCode] } });
         if (isPhoneAlreadyUsed) {
             res.status(400).send({ status: false, message: `${phone}  is already registered` })
             return
@@ -50,7 +50,7 @@ const createUser = async function (req, res) {
             return
         }
 
-        if(!validate.isValidEmail(email)) {
+        if (!validate.isValidEmail(email)) {
             res.status(400).send({ status: false, message: `Email should be a valid email address` })
             return
         }
@@ -66,20 +66,20 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, message: `Password is required` })
             return
         }
-        if (!(/[a-zA-Z0-9@]{8,15}/.test(password))) {
-             return res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
+        if (!(validate.isValidPassword(password))) {
+            return res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
         if (!validate.isValid(password)) {
             res.status(400).send({ status: false, message: `Password is required` })
             return
         }
-        if(!validate.isValidPincode(address.pincode)){
+        if (!validate.isValidPincode(address.pincode)) {
             res.status(400).send({ status: false, message: `pincode is not valid` })
             return
         }
 
         let user = await userModel.create(req.body)
-         return res.status(201).send({ status: true, data: user })
+        return res.status(201).send({ status: true, message: 'Success', data: user })
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message })
     }
@@ -99,9 +99,9 @@ const loginUser = async function (req, res) {
         if (!user)
             return res.status(400).send({ status: false, msg: "Username or the password is not corerct" });
 
-            let token = jwt.sign({userId: user._id.toString()}, "this-is-aSecretTokenForLogin" ,{expiresIn : "1800s"})
-       
-        return res.status(201).send({ status: true, data: token });
+        let token = jwt.sign({ userId: user._id.toString() }, "this-is-aSecretTokenForLogin", { expiresIn: "1800s" })
+
+        return res.status(201).send({ status: true, message: 'Success', data: token });
     } catch (error) {
         console.log(error)
         res.status(500).send({ status: false, msg: error.message })
