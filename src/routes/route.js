@@ -6,8 +6,8 @@ const router = express.Router();
 const userController = require('../controller/userController')
 const bookController = require('../controller/bookController')
 const reviewContoller =require('../controller/reviewController')
-const mid1 = require('../middleware/auth')
-
+const middleware = require('../middleware/auth')
+// const reviewContoller = require('../controller/reviewController')
 
 // post for user
 
@@ -17,25 +17,16 @@ router.post('/register', userController.createUser)
 
 router.post('/login', userController.loginUser)
 
-// post for book
+router.post('/books', middleware.mid, bookController.createBook)
 
-router.post('/books', mid1.mid, bookController.createBook)
+router.get('/books', middleware.mid, bookController.getBook)
 
+router.get('/books/:bookId',bookController.getBookWithreview)
 
-// get for book
+router.put('/books/:bookId', middleware.mid, bookController.updateBook)
 
-router.get('/books', mid1.mid, bookController.getBook)
+router.post('/books/:bookId/review', middleware.mid,reviewContoller.addReview)
 
-// update for book
-
-router.put('/books/:bookId', mid1.mid,  bookController.updateBook)
-
-// post add review
-
-router.post('/books/:bookId/review', reviewContoller.addReview)
-
-// delete book by book id
-
-router.delete('/books/:bookId',bookController.deletedById)
+router.delete('/books/:bookId',middleware.mid,bookController.deletedById)
 
 module.exports = router;
