@@ -69,10 +69,7 @@ const createUser = async function (req, res) {
         if (!(validate.isValidPassword(password))) {
             return res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
-        if (!validate.isValid(password)) {
-            res.status(400).send({ status: false, message: `Password is required` })
-            return
-        }
+        
         if (!validate.isValidPincode(address.pincode)) {
             res.status(400).send({ status: false, message: `pincode is not valid` })
             return

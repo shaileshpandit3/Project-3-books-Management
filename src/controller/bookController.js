@@ -93,7 +93,7 @@ const getBook = async function (req, res) {
                 })
                 return res.status(200).send({ status: true, message: "Booklist", data: result })
             }
-            return res.status(404).send({ status: false, message: "success", msg: "No book found" })
+            return res.status(404).send({ status: false, msg: "No book found" })
         }
 
         let bookKeys = ["userId", "category", "subCategory"]
@@ -113,7 +113,7 @@ const getBook = async function (req, res) {
                 if (a.title > b.title) return 1
                 if (a.title = b.title) return 0
             })
-            return res.status(200).send({ status: true, message: "success", data: result });
+            return res.status(200).send({ status: true, message: "Booklist", data: result });
         }
 
         return res.status(404).send({ status: false, msg: " No book data found" })
@@ -161,10 +161,6 @@ const getBookWithreview = async (req, res) => {
 
 let updateBook = async function (req, res) {
     try {
-        let book_id = req.params.bookId;
-        if (!validate.isValid(book_id)) {
-            return res.status(400).send({ status: false, msg: "Please enter book Id" })
-        }
         if (!validate.isValidObjectId(book_id)) {
             return res.status(400).send({ status: false, msg: "Please enter a valid book Id" })
         }
@@ -174,6 +170,7 @@ let updateBook = async function (req, res) {
         let validBook = await bookModel.findOne({ _id: book_id, isDeleted: false })
         if (!validBook)
             return res.status(404).send({ status: false, msg: "No book found" })
+
         if (validBook.userId.toString() !== req.loggedInUser) { 
             return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
         }
@@ -231,7 +228,7 @@ let updateBook = async function (req, res) {
 const deletedById = async function (req, res) {
     try {
         if (!validate.isValidObjectId(req.params.bookId)) {
-            return res.status(400).send({ status: false, msg: "Book is is not deleted" })
+            return res.status(400).send({ status: false, msg: "Book id is not valid" })
         }
 
         let filterDetails = {
@@ -239,16 +236,14 @@ const deletedById = async function (req, res) {
             _id: req.params.bookId
         }
 
-        const book = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
+        const book = await bookModel.findOne(filterDetails)
         if (!book) {
             return res.status(404).send({ status: false, msg: 'Book not found' })
         }
-
-        if (book.userId.toString() !== req.loggedInUser) {
+        if (book.userId.toString() != req.loggedInUser) {
             return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
 
         }
-
         const deletedBook = await bookModel.findOneAndUpdate(filterDetails, { isDeleted: true, deletedAt: new Date() })
 
         if (deletedBook) {
