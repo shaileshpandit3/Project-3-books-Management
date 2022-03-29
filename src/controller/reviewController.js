@@ -85,7 +85,6 @@ try {
 module.exports.addReview = addReview
 
 
-<<<<<<< HEAD
 //=====================================================================================================
 
 
@@ -123,7 +122,6 @@ const deleteReview = async (req,res) =>{
 }
 
 module.exports.deleteReview = deleteReview
-=======
 // ================================================================================================
 
 const updateReview = async (req, res) => {
@@ -214,4 +212,3 @@ try {
 }   
 module.exports.updateReview = updateReview
 
->>>>>>> 2ad0d92d3ed930f364e00a937d1a578e2ead1f73
