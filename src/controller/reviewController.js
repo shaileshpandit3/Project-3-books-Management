@@ -83,3 +83,42 @@ try {
 }
 
 module.exports.addReview = addReview
+
+
+//=====================================================================================================
+
+
+const deleteReview = async (req,res) =>{
+
+    try{
+        if (!validate.isValidObjectId(req.params.bookId)) {
+            return res.status(400).send({ status: false, msg: "bookId is not valid" })
+        }
+
+        if (!validate.isValidObjectId(req.params.reviewId)) {
+            return res.status(400).send({ status: false, msg: "reviewId is not valid" })
+        }
+
+        let book = await bookModel.findOne({ _id : req.params.bookId , isDeleted:false })
+
+        if (!book){
+            return res.status(400).send( { status : false , msg : 'Book not exist '} )
+        }
+
+        const deleteReview = await reviewModel.findOneAndUpdate( { _id : req.params.reviewId , isDeleted : false } , { isDeleted : true } )
+
+        if(deleteReview){
+            const reviewCount = await reviewModel.find( { bookId : req.params.bookId, isDeleted : false}). count()
+            await bookModel.findByIdAndUpdate( { _id : req.params.bookId} , { reviews: reviewCount})
+            return res.status(200).send({ status: false , msg : "review is deleted successfully"})
+        }else{
+            return res.status(400).send({ statsu: false , msg: 'review not exist'})
+        }
+
+    }catch(error){
+        res.status(500).send({satus:false,error:error.message})
+    }
+
+}
+
+module.exports.deleteReview = deleteReview
