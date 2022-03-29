@@ -25,4 +25,6 @@ router.post('/books/:bookId/review', middleware.mid,reviewContoller.addReview)
 
 router.delete('/books/:bookId',middleware.mid,bookController.deletedById)
 
+router.put('/books/:bookId/review/:reviewId',reviewContoller.updateReview)
+
 module.exports = router;
