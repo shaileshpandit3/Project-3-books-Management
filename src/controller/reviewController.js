@@ -27,12 +27,15 @@ const addReview = async (req, res) => {
             return res.status(404).send({ status: false, message: "reviewed By is require" })
         }
 
-        if (reviewedBy == "" || reviewedBy == null) {
-            reviewedBy = 'Guest'
-        }
+        if (Object.keys(req.body).includes("reviewedBy")) {
 
-        if (typeof reviewedBy !== String) {
-            return res.status(400).send({ status: false, message: "Please Give a proper Name" })
+            if ((reviewedBy.trim() == "") || ( reviewedBy == null )) {
+                reviewedBy = 'Guest'
+            }
+            if (typeof reviewedBy != 'string') {
+                return res.status(400).send({ status: false, message: "Please Give a proper Name" })
+            }
+        
         }
 
 
@@ -141,7 +144,6 @@ const updateReview = async (req, res) => {
         if (!isBook) {
             return res.status(404).send({ status: false, message: "Book Not Found, PLease check book Id" })
         }
-
         if (!validate.isValidObjectId(reviewID)) {
             return res.status(400).send({ status: false, message: "Invalid ReviewId" })
         }
@@ -151,27 +153,32 @@ const updateReview = async (req, res) => {
             return res.status(404).send({ status: false, message: "Review Not Found, Please Check Review Id" })
         }
 
+        if (isReview['bookId'] != bookId) {
+            return res.status(400).send({ status: false, message: "This review dosent belong To given Book Id" })
+        }
+        
+        let { reviewedBy, rating, review } = dataToUpdate
 
-        const { reviewedBy, rating, review } = dataToUpdate
+        let reviewKeys = ["reviewedBy", "rating", "review"]
+        for (let i = 0; i < Object.keys(req.body).length; i++) {
+            let keyPresent = reviewKeys.includes(Object.keys(req.body)[i])
+            if (!keyPresent)
+                return res.status(400).send({ status: false, msg: "Wrong Key present" })
+        }
 
-        if (reviewedBy) {
-
-            if ((reviewedBy == "") || (reviewedBy == null)) {
+        if (Object.keys(dataToUpdate).includes("reviewedBy")) {
+            if ((reviewedBy.trim() == "") || (reviewedBy == null)) {
                 reviewedBy = 'Guest'
-            } else {
-
-                if (typeof reviewedBy !== String) {
-                    return res.status(400).send({ status: false, message: "Please Give a proper Name" })
-                }
             }
-
+            if (typeof reviewedBy != 'string') {
+                return res.status(400).send({ status: false, message: "Please Give a proper Name" })
+            }
             updateQuery.reviewedBy = reviewedBy
         }
 
 
-        if (rating) {
-
-            if (typeof rating !== Number) {
+        if (Object.keys(dataToUpdate).includes("ratings")) {
+            if (typeof rating != 'number') {
                 return res.status(400).send({ status: false, message: "invalid Rating Input" })
             }
             if (!(rating >= 1 && rating <= 5)) {
@@ -181,14 +188,13 @@ const updateReview = async (req, res) => {
             updateQuery.rating = rating
         }
 
-        if (review) {
+        if (Object.keys(dataToUpdate).includes("reviews")) {
 
             if (!validate.isValid(review)) {
                 return res.status(400).send({ status: false, message: "Please Enter A Valid Review" })
             }
             updateQuery.review = review
         }
-
         if (isReview['bookId'] == bookId) {
 
             const updatedReview = await reviewModel.findOneAndUpdate({ _id: reviewID, isDeleted: false },

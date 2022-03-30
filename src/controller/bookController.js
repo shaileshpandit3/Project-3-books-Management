@@ -17,34 +17,44 @@ const createBook = async (req, res) => {
         if (!validate.isValidRequestBody(bookData)) {
             return res.status(400).send({ status: false, message: "Invalid Parameters" })
         }
+        
         let { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt } = req.body
 
         if (userId.toString() !== req.loggedInUser) {
             return res.status(403).send({ satus: false, msg: `Unauthorized access! Owner info doesn't match` })
         }
+
         if (!validate.isValid(title)) {
             return res.status(400).send({ status: false, message: "title Is Required" })
         }
+
         const duplicateTitle = await bookModel.findOne({ title: req.body.title })
+        
         if (duplicateTitle) {
             return res.status(400).send({ status: false, message: "title is already present" })
         }
+
         if (!validate.isValid(excerpt)) {
             return res.status(400).send({ status: false, message: "Excerpt Is Requird" })
         }
+
         if (!validate.isValid(userId)) {
             return res.status(400).send({ status: false, message: "User Id required!" })
         }
+
         if (!validate.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Invalid User Id!" })
         }
+
         const ifUserExist = await userModel.findById(userId)
         if (!ifUserExist) {
             return res.status(404).send({ status: false, message: "User Not Found, Please Check User Id" })
         }
+
         if (!validate.isValidISBN(ISBN)) {
             return res.status(400).send({ status: false, message: "Invalid ISBN Enterd" })
         }
+
         const duplicateISBN = await bookModel.findOne({ ISBN: req.body.ISBN })
         if (duplicateISBN) {
             return res.status(400).send({ status: false, message: "ISBN is already present" })
@@ -52,20 +62,25 @@ const createBook = async (req, res) => {
         if (!validate.isValid(category)) {
             return res.status(400).send({ status: false, message: "Category Is Required" })
         }
+
         if (!validate.isValid(subcategory)) {
             return res.status(400).send({ status: false, message: "Subcategory Is Required" })
         }
+
         if (reviews) {
             if (typeof reviews !== 'number') {
                 return res.status(400).send({ status: false, message: " Reviews - Unexpected Input" })
             }
         }
+
         if (!validate.isValidReleasedAt(releasedAt)) {
             return res.status(400).send({ status: false, message: " Please enter date in YYYY-MM-DD" })
         }
+
         if (req.body.isDeleted === true) {
             return res.status(400).send({ status: false, message: "No Data Should Be Deleted At The Time Of Creation" })
         }
+
         const newBook = await bookModel.create(bookData)
         return res.status(201).send({ status: true, message: "Success", Data: newBook })
 
