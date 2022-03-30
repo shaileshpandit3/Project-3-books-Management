@@ -68,10 +68,10 @@ const addReview = async (req, res) => {
         delete newData2.updatedAt
         delete newData2.__v
 
-        let checkRevCount = await reviewModel.find({ bookId: bookId, isDeleted: false }).select(updatedAt = 0, createdAt = 0)
-        let count = checkRevCount.length
+        let checkRevCount = await reviewModel.find({ bookId: bookId, isDeleted: false }).select(updatedAt = 0, createdAt = 0).count()
+        //let count = checkRevCount.length
 
-        let updatedBook = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: { reviews: count } }, { new: true })
+        let updatedBook = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: { reviews: checkRevCount } }, { new: true })
 
         return res.status(201).send({
             status: true, message: "Success",
@@ -113,7 +113,7 @@ const deleteReview = async (req, res) => {
         if (deleteReview) {
             const reviewCount = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false }).count()
             await bookModel.findByIdAndUpdate({ _id: req.params.bookId }, { reviews: reviewCount })
-            
+
             return res.status(200).send({ status: true, message: "review is deleted successfully" })
             
         } 
