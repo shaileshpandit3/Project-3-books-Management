@@ -111,7 +111,7 @@ const deleteReview = async (req, res) => {
         if (deleteReview) {
             const reviewCount = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false }).count()
             await bookModel.findByIdAndUpdate({ _id: req.params.bookId }, { reviews: reviewCount })
-            return res.status(200).send({ status: false, msg: "review is deleted successfully" })
+            return res.status(200).send({ status: true, msg: "review is deleted successfully" })
         } else {
             return res.status(400).send({ statsu: false, msg: 'review not exist' })
         }
