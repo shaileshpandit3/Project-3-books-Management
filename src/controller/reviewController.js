@@ -29,13 +29,13 @@ const addReview = async (req, res) => {
 
         if (Object.keys(req.body).includes("reviewedBy")) {
 
-            if ((reviewedBy.trim() == "") || ( reviewedBy == null )) {
-                reviewedBy = 'Guest'
-            }
             if (typeof reviewedBy != 'string') {
                 return res.status(400).send({ status: false, message: "Please Give a proper Name" })
             }
-        
+            
+            if ((reviewedBy.trim() == "") || ( reviewedBy == null )) {
+                reviewedBy = 'Guest'
+            }
         }
 
 
@@ -167,12 +167,15 @@ const updateReview = async (req, res) => {
         }
 
         if (Object.keys(dataToUpdate).includes("reviewedBy")) {
-            if ((reviewedBy.trim() == "") || (reviewedBy == null)) {
-                reviewedBy = 'Guest'
-            }
+            
             if (typeof reviewedBy != 'string') {
                 return res.status(400).send({ status: false, message: "Please Give a proper Name" })
             }
+
+            if ((reviewedBy.trim() == "") || (reviewedBy == null)) {
+                reviewedBy = 'Guest'
+            }
+
             updateQuery.reviewedBy = reviewedBy
         }
 
