@@ -3,6 +3,8 @@ const bookModel = require('../models/bookModel')
 const reviewModel = require("../models/reviewModel")
 const validate = require('../validator/validators')
 
+///////////////////  Add Review   /////////////////////////
+
 
 const addReview = async (req, res) => {
 
@@ -111,7 +113,7 @@ const deleteReview = async (req, res) => {
         if (deleteReview) {
             const reviewCount = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false }).count()
             await bookModel.findByIdAndUpdate({ _id: req.params.bookId }, { reviews: reviewCount })
-            return res.status(200).send({ status: true, msg: "review is deleted successfully" ,Data: deleteReview})
+            return res.status(200).send({ status: true, msg: "review is deleted successfully" , Data: deleteReview})
             
         } 
             return res.status(400).send({ statsu: false, msg: 'review not exist' })
@@ -124,6 +126,8 @@ const deleteReview = async (req, res) => {
 }
 
 module.exports.deleteReview = deleteReview
+
+
 // ================================================================================================
 
 const updateReview = async (req, res) => {
