@@ -1,6 +1,9 @@
+
+
 const jwt = require('jsonwebtoken')
 
 const mid = function (req, res, next) {
+    
     try {
         let token = req.headers['x-api-key']
         if (!token) {
@@ -20,8 +23,6 @@ const mid = function (req, res, next) {
         res.status(500).send({ status: false, msg: error })
     }
 }
-
-
 
 module.exports.mid = mid
 

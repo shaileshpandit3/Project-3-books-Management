@@ -27,12 +27,15 @@ const addReview = async (req, res) => {
             return res.status(404).send({ status: false, message: "reviewed By is require" })
         }
 
-        if (reviewedBy == "" || reviewedBy == null) {
-            reviewedBy = 'Guest'
-        }
+        if (Object.keys(req.body).includes("reviewedBy")) {
 
-        if (typeof reviewedBy !== String) {
-            return res.status(400).send({ status: false, message: "Please Give a proper Name" })
+            if ((reviewedBy.trim() == "") || ( reviewedBy == null )) {
+                reviewedBy = 'Guest'
+            }
+            if (typeof reviewedBy != 'string') {
+                return res.status(400).send({ status: false, message: "Please Give a proper Name" })
+            }
+        
         }
 
 
@@ -155,6 +158,7 @@ const updateReview = async (req, res) => {
         }
 
         let { reviewedBy, rating, review } = dataToUpdate
+
         let reviewKeys = ["reviewedBy", "rating", "review"]
         for (let i = 0; i < Object.keys(req.body).length; i++) {
             let keyPresent = reviewKeys.includes(Object.keys(req.body)[i])
@@ -166,7 +170,7 @@ const updateReview = async (req, res) => {
             if ((reviewedBy.trim() == "") || (reviewedBy == null)) {
                 reviewedBy = 'Guest'
             }
-            if (typeof reviewedBy !== 'string') {
+            if (typeof reviewedBy != 'string') {
                 return res.status(400).send({ status: false, message: "Please Give a proper Name" })
             }
             updateQuery.reviewedBy = reviewedBy
@@ -205,3 +209,4 @@ const updateReview = async (req, res) => {
 }
 module.exports.updateReview = updateReview
 
+//=====================================================================================================

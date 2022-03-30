@@ -99,10 +99,11 @@ const loginUser = async function (req, res) {
         let token = jwt.sign({ userId: user._id.toString() }, "this-is-aSecretTokenForLogin", { expiresIn: "1800s" })
 
         return res.status(201).send({ status: true, message: 'Success', data: token });
+
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message })
     }
 }
 
-module.exports.createUser = createUser
+module.exports.createUser = createUser;
 module.exports.loginUser = loginUser;
