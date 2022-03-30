@@ -66,7 +66,7 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, message: `Password is required` })
             return
         }
-        
+
         if (!(validate.isValidPassword(password))) {
             return res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
@@ -91,18 +91,18 @@ const loginUser = async function (req, res) {
         let userName = req.body.email;
         let password = req.body.password;
         if (!userName || !password)
-            return res.status(400).send({ status: false, msg: "Username or the password is not entered" });
+            return res.status(400).send({ status: false, message: "Username or the password is not entered" });
 
         let user = await userModel.findOne({ email: userName, password: password });
         if (!user)
-            return res.status(401).send({ status: false, msg: "Username or the password is not corerct" });
+            return res.status(401).send({ status: false, message: "Username or the password is not corerct" });
 
         let token = jwt.sign({ userId: user._id.toString() }, "this-is-aSecretTokenForLogin", { expiresIn: "1800s" })
 
         return res.status(201).send({ status: true, message: 'Success', data: token });
 
     } catch (error) {
-        res.status(500).send({ status: false, msg: error.message })
+        res.status(500).send({ status: false, message: error.message })
     }
 }
 

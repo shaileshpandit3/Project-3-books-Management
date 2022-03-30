@@ -3,6 +3,8 @@ const bookModel = require('../models/bookModel')
 const reviewModel = require("../models/reviewModel")
 const validate = require('../validator/validators')
 
+///////////////////  Add Review   /////////////////////////
+
 
 const addReview = async (req, res) => {
 
@@ -91,17 +93,17 @@ const deleteReview = async (req, res) => {
 
     try {
         if (!validate.isValidObjectId(req.params.bookId)) {
-            return res.status(400).send({ status: false, msg: "bookId is not valid" })
+            return res.status(400).send({ status: false, message: "bookId is not valid" })
         }
 
         if (!validate.isValidObjectId(req.params.reviewId)) {
-            return res.status(400).send({ status: false, msg: "reviewId is not valid" })
+            return res.status(400).send({ status: false, message: "reviewId is not valid" })
         }
 
         let book = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
 
         if (!book) {
-            return res.status(400).send({ status: false, msg: 'Book not exist ' })
+            return res.status(400).send({ status: false, message: 'Book not exist ' })
         }
 
         const deleteReview = await reviewModel.findOneAndUpdate({ _id: req.params.reviewId, isDeleted: false }, { isDeleted: true })
@@ -111,10 +113,11 @@ const deleteReview = async (req, res) => {
         if (deleteReview) {
             const reviewCount = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false }).count()
             await bookModel.findByIdAndUpdate({ _id: req.params.bookId }, { reviews: reviewCount })
-            return res.status(200).send({ status: true, msg: "review is deleted successfully" })
+            
+            return res.status(200).send({ status: true, message: "review is deleted successfully" })
             
         } 
-            return res.status(400).send({ statsu: false, msg: 'review not exist' })
+            return res.status(400).send({ statsu: false, message: 'review not exist' })
         
 
     } catch (error) {
@@ -124,6 +127,8 @@ const deleteReview = async (req, res) => {
 }
 
 module.exports.deleteReview = deleteReview
+
+
 // ================================================================================================
 
 const updateReview = async (req, res) => {
