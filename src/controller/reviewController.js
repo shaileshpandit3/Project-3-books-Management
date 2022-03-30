@@ -11,18 +11,30 @@ const addReview = async (req, res) => {
     try {
 
         let reviewData = req.body
-        let bookId = req.params.bookId
+        let bookID = req.params.bookId
 
-        let { reviewedBy, rating, review } = reviewData
+        let { bookId,reviewedBy, rating, review } = reviewData
 
-        if (!validate.isValidObjectId(bookId.trim())) {
+        if(!validate.isValid(bookId)) {
+            return res.status(400).send({ status: false, message: "Book Id Is Required For writing Review" })
+        }
+
+        if (!validate.isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, message: "Please Enter A valid Book Id" })
         }
 
-        let isBookPresent = await bookModel.findOne({ _id: bookId, isDeleted: false })
+        if (!validate.isValidObjectId(bookID)) {
+            return res.status(400).send({ status: false, message: "Please Enter A valid Book Id" })
+        }
+
+        let isBookPresent = await bookModel.findOne({ _id: bookID, isDeleted: false })
 
         if (!isBookPresent) {
             return res.status(404).send({ status: false, message: "Book not found, please check Book Id" })
+        }
+
+        if(req.body.bookId != req.params.bookId) {
+            return res.status(400).send({ status : false, message: "This review dosent belong To given Book Id" })
         }
 
         if (!Object.keys(req.body).includes("reviewedBy")) {
@@ -68,10 +80,10 @@ const addReview = async (req, res) => {
         delete newData2.updatedAt
         delete newData2.__v
 
-        let checkRevCount = await reviewModel.find({ bookId: bookId, isDeleted: false }).select(updatedAt = 0, createdAt = 0).count()
+        let checkRevCount = await reviewModel.find({ bookId: bookID, isDeleted: false }).select(updatedAt = 0, createdAt = 0).count()
         //let count = checkRevCount.length
 
-        let updatedBook = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: { reviews: checkRevCount } }, { new: true })
+        let updatedBook = await bookModel.findOneAndUpdate({ _id: bookID, isDeleted: false }, { $set: { reviews: checkRevCount } }, { new: true })
 
         return res.status(201).send({
             status: true, message: "Success",
@@ -92,11 +104,11 @@ module.exports.addReview = addReview
 const deleteReview = async (req, res) => {
 
     try {
-        if (!validate.isValidObjectId(req.params.bookId.trim())) {
+        if (!validate.isValidObjectId(req.params.bookId)) {
             return res.status(400).send({ status: false, message: "bookId is not valid" })
         }
 
-        if (!validate.isValidObjectId(req.params.reviewId.trim())) {
+        if (!validate.isValidObjectId(req.params.reviewId)) {
             return res.status(400).send({ status: false, message: "reviewId is not valid" })
         }
 
@@ -135,8 +147,8 @@ const updateReview = async (req, res) => {
 
     try {
 
-        const reviewID = req.params.reviewId.trim()
-        const bookId = req.params.bookId.trim()
+        const reviewID = req.params.reviewId
+        const bookId = req.params.bookId
         let dataToUpdate = req.body
         let updateQuery = {}
 

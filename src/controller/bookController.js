@@ -98,15 +98,12 @@ const createBook = async (req, res) => {
 const getBook = async function (req, res) {
     try {
         if (Object.keys(req.query).length == 0) {
-            let result = await bookModel.find({ isDeleted: false }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 })
+            let result = await bookModel.find({ isDeleted: false }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 }).sort( {title: 1} )
             if (result.length != 0) {
-                result.sort(function (a, b) {
-                    if (a.title < b.title) return -1
-                    if (a.title > b.title) return 1
-                    if (a.title = b.title) return 0
-                })
+
                 return res.status(200).send({ status: true, message: "Booklist", data: result })
             }
+
             return res.status(404).send({ status: false, message: "No book found" })
         }
 
@@ -120,17 +117,14 @@ const getBook = async function (req, res) {
         let filterDetails = req.query;
         filterDetails.isDeleted = false;
 
-        let result = await bookModel.find(filterDetails).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 })
+        let result = await bookModel.find( filterDetails ).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 }).sort({ title : 1 })
+
         if (result.length != 0) {
-            result.sort(function (a, b) {
-                if (a.title < b.title) return -1
-                if (a.title > b.title) return 1
-                if (a.title = b.title) return 0
-            })
             return res.status(200).send({ status: true, message: "Booklist", data: result });
         }
 
         return res.status(404).send({ status: false, message: " No book data found" })
+
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
