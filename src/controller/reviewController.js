@@ -153,7 +153,7 @@ const updateReview = async (req, res) => {
         if (isReview['bookId'] != bookId) {
             return res.status(400).send({ status: false, message: "This review dosent belong To given Book Id" })
         }
-        
+
         let { reviewedBy, rating, review } = dataToUpdate
         let reviewKeys = ["reviewedBy", "rating", "review"]
         for (let i = 0; i < Object.keys(req.body).length; i++) {
@@ -191,18 +191,13 @@ const updateReview = async (req, res) => {
             }
             updateQuery.review = review
         }
-        if (isReview['bookId'] == bookId) {
 
-            const updatedReview = await reviewModel.findOneAndUpdate({ _id: reviewID, isDeleted: false },
-                { $set: updateQuery },
-                { new: true }).select({ __v: 0 })
+        const updatedReview = await reviewModel.findOneAndUpdate({ _id: reviewID, isDeleted: false },
+            { $set: updateQuery },
+            { new: true }).select({ __v: 0 })
 
-            return res.status(200).send({ status: true, message: "Success", Data: updatedReview })
+        return res.status(200).send({ status: true, message: "Success", Data: updatedReview })
 
-
-        } else {
-            return res.status(400).send({ status: false, message: "This review dosent belong To given Book Id" })
-        }
 
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
