@@ -47,12 +47,12 @@ const isValidISBN = ( ISBN ) => {
 }
 
 const isValidReleasedAt = (releasedAt) => {
-    return /((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)
+    return /\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])/.test(releasedAt)
 }
 // const isAllLetters = (val) => {
 //     return /^[A-Za-z]+$/.test(val)
 // }
-
+// /((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/
 
 module.exports = {
     isValid,

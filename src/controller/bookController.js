@@ -11,7 +11,7 @@ const { default: mongoose } = require('mongoose')
 
 const createBook = async (req, res) => {
 
-    try {
+    // try {
         let bookData = req.body
         if (!validate.isValidRequestBody(bookData)) {
             return res.status(400).send({ status: false, message: "Invalid Parameters" })
@@ -41,7 +41,7 @@ const createBook = async (req, res) => {
             return res.status(400).send({ status: false, message: "User Id required!" })
         }
 
-        if (!validate.isValidObjectId(userId.trim)) {
+        if (!validate.isValidObjectId(userId.trim())) {
             return res.status(400).send({ status: false, message: "Invalid User Id!" })
         }
 
@@ -83,9 +83,9 @@ const createBook = async (req, res) => {
         const newBook = await bookModel.create(bookData)
         return res.status(201).send({ status: true, message: "Success", Data: newBook })
 
-    } catch (error) {
-        res.status(500).send({ status: false, message: error.message })
-    }
+    // } catch (error) {
+    //     res.status(500).send({ status: false, message: error.message })
+    // }
 
 };
 
