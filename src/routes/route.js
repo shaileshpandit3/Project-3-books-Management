@@ -7,13 +7,9 @@ const userController = require('../controller/userController')
 const bookController = require('../controller/bookController')
 const reviewContoller =require('../controller/reviewController')
 const middleware = require('../middleware/auth')
-// const reviewContoller = require('../controller/reviewController')
 
-// post for user
 
 router.post('/register', userController.createUser)
-
-// post for login user 
 
 router.post('/login', userController.loginUser)
 
@@ -25,9 +21,9 @@ router.get('/books/:bookId', middleware.mid, bookController.getBookWithreview)
 
 router.put('/books/:bookId', middleware.mid, bookController.updateBook)
 
-router.post('/books/:bookId/review',reviewContoller.addReview)
-
 router.delete('/books/:bookId',middleware.mid,bookController.deletedById)
+
+router.post('/books/:bookId/review',reviewContoller.addReview)
 
 router.delete('/books/:bookId/review/:reviewId',reviewContoller.deleteReview)
 
