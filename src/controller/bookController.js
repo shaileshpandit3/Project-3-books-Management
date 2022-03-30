@@ -19,6 +19,19 @@ const createBook = async (req, res) => {
         
         let { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt } = req.body
 
+        if (!validate.isValid(userId)) {
+            return res.status(400).send({ status: false, message: "User Id required!" })
+        }
+
+        if (!validate.isValidObjectId(userId.trim())) {
+            return res.status(400).send({ status: false, message: "Invalid User Id!" })
+        }
+
+        const ifUserExist = await userModel.findById(userId)
+        if (!ifUserExist) {
+            return res.status(404).send({ status: false, message: "User Not Found, Please Check User Id" })
+        }
+
         if (userId.toString() !== req.loggedInUser) {
             return res.status(403).send({ satus: false, message: `Unauthorized access! Owner info doesn't match` })
         }
@@ -35,19 +48,6 @@ const createBook = async (req, res) => {
 
         if (!validate.isValid(excerpt)) {
             return res.status(400).send({ status: false, message: "Excerpt Is Requird" })
-        }
-
-        if (!validate.isValid(userId)) {
-            return res.status(400).send({ status: false, message: "User Id required!" })
-        }
-
-        if (!validate.isValidObjectId(userId.trim())) {
-            return res.status(400).send({ status: false, message: "Invalid User Id!" })
-        }
-
-        const ifUserExist = await userModel.findById(userId)
-        if (!ifUserExist) {
-            return res.status(404).send({ status: false, message: "User Not Found, Please Check User Id" })
         }
 
         if (!validate.isValidISBN(ISBN.trim())) {
