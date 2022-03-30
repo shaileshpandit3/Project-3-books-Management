@@ -41,7 +41,7 @@ const createBook = async (req, res) => {
             return res.status(400).send({ status: false, message: "User Id required!" })
         }
 
-        if (!validate.isValidObjectId(userId.trim)) {
+        if (!validate.isValidObjectId(userId.trim())) {
             return res.status(400).send({ status: false, message: "Invalid User Id!" })
         }
 
