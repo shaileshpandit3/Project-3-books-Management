@@ -98,7 +98,8 @@ const createBook = async (req, res) => {
 const getBook = async function (req, res) {
     try {
         if (Object.keys(req.query).length == 0) {
-            let result = await bookModel.find({ isDeleted: false }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 })
+            let result = await bookModel.find({ isDeleted: false }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, review: 1 }).count()
+            console.log(result)
             if (result.length != 0) {
                 result.sort(function (a, b) {
                     if (a.title < b.title) return -1
