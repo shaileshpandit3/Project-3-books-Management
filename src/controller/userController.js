@@ -69,10 +69,7 @@ const createUser = async function (req, res) {
         if (!(validate.isValidPassword(password))) {
             return res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
-        if (!validate.isValid(password)) {
-            res.status(400).send({ status: false, message: `Password is required` })
-            return
-        }
+        
         if (!validate.isValidPincode(address.pincode)) {
             res.status(400).send({ status: false, message: `pincode is not valid` })
             return
@@ -102,11 +99,11 @@ const loginUser = async function (req, res) {
         let token = jwt.sign({ userId: user._id.toString() }, "this-is-aSecretTokenForLogin", { expiresIn: "1800s" })
 
         return res.status(201).send({ status: true, message: 'Success', data: token });
+
     } catch (error) {
-        console.log(error)
         res.status(500).send({ status: false, msg: error.message })
     }
 }
 
-module.exports.createUser = createUser
+module.exports.createUser = createUser;
 module.exports.loginUser = loginUser;
