@@ -41,7 +41,7 @@ const createBook = async (req, res) => {
             return res.status(400).send({ status: false, message: "User Id required!" })
         }
 
-        if (!validate.isValidObjectId(userId)) {
+        if (!validate.isValidObjectId(userId.trim)) {
             return res.status(400).send({ status: false, message: "Invalid User Id!" })
         }
 
@@ -50,7 +50,7 @@ const createBook = async (req, res) => {
             return res.status(404).send({ status: false, message: "User Not Found, Please Check User Id" })
         }
 
-        if (!validate.isValidISBN(ISBN)) {
+        if (!validate.isValidISBN(ISBN.trim())) {
             return res.status(400).send({ status: false, message: "Invalid ISBN Enterd" })
         }
 
@@ -72,7 +72,7 @@ const createBook = async (req, res) => {
             }
         }
 
-        if (!validate.isValidReleasedAt(releasedAt)) {
+        if (!validate.isValidReleasedAt(releasedAt.trim())) {
             return res.status(400).send({ status: false, message: " Please enter date in YYYY-MM-DD" })
         }
 
@@ -147,7 +147,7 @@ const getBook = async function (req, res) {
 const getBookWithreview = async (req, res) => {
 
     try {
-        if (!validate.isValidObjectId( req.params.bookId )) {
+        if (!validate.isValidObjectId( req.params.bookId.trim() )) {
             return res.status(400).send({ status: false, message: "bookId is not valid" })
         }
         let tempbook = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
@@ -176,7 +176,7 @@ const getBookWithreview = async (req, res) => {
 let updateBook = async function (req, res) {
     try {
         let book_id = req.params.bookId
-        if (!validate.isValidObjectId(book_id)) {
+        if (!validate.isValidObjectId(book_id.trim())) {
             return res.status(400).send({ status: false, message: "Please enter a valid book Id" })
         }
         if (Object.keys(req.body).length == 0) {
@@ -209,7 +209,7 @@ let updateBook = async function (req, res) {
             }
         }
         if (Object.keys(req.body).includes('ISBN')) {
-            if (!validate.isValidISBN(req.body.ISBN)) {
+            if (!validate.isValidISBN(req.body.ISBN.trim())) {
                 return res.status(400).send({ status: false, message: "Invalid ISBN Enterd" })
             }
             const duplicateISBN = await bookModel.findOne({ title: req.body.ISBN })
@@ -217,7 +217,7 @@ let updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: "ISBN is already present" })
         }
         if (Object.keys(req.body).includes('releasedAt')) {
-            if (!validate.isValidReleasedAt(req.body.releasedAt)) {
+            if (!validate.isValidReleasedAt(req.body.releasedAt.trim())) {
                 return res.status(400).send({ status: false, message: " Please enter date in YYYY-MM-DD" })
             }
         }
@@ -239,7 +239,7 @@ let updateBook = async function (req, res) {
 
 const deletedById = async function (req, res) {
     try {
-        if (!validate.isValidObjectId(req.params.bookId)) {
+        if (!validate.isValidObjectId(req.params.bookId.trim())) {
             return res.status(400).send({ status: false, message: "Book id is not valid" })
         }
 

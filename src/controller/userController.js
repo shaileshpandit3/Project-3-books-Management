@@ -34,7 +34,7 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, message: 'phone number is required' })
             return
         }
-        if (!validate.isValidPhone(phone)) {
+        if (!validate.isValidPhone(phone.trim())) {
             res.status(400).send({ status: false, message: 'phone number is not valid' })
             return
         }
@@ -50,7 +50,7 @@ const createUser = async function (req, res) {
             return
         }
 
-        if (!validate.isValidEmail(email)) {
+        if (!validate.isValidEmail(email.trim())) {
             res.status(400).send({ status: false, message: `Email should be a valid email address` })
             return
         }
@@ -67,11 +67,11 @@ const createUser = async function (req, res) {
             return
         }
 
-        if (!(validate.isValidPassword(password))) {
+        if (!(validate.isValidPassword(password.trim()))) {
             return res.status(400).send({ status: false, message: `password length should be betwwen 8-15` })
         }
         
-        if (!validate.isValidPincode(address.pincode)) {
+        if (!validate.isValidPincode(address.pincode.trim())) {
             res.status(400).send({ status: false, message: `pincode is not valid` })
             return
         }

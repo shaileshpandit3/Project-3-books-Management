@@ -15,7 +15,7 @@ const addReview = async (req, res) => {
 
         let { reviewedBy, rating, review } = reviewData
 
-        if (!validate.isValidObjectId(bookId)) {
+        if (!validate.isValidObjectId(bookId.trim())) {
             return res.status(400).send({ status: false, message: "Please Enter A valid Book Id" })
         }
 
@@ -92,11 +92,11 @@ module.exports.addReview = addReview
 const deleteReview = async (req, res) => {
 
     try {
-        if (!validate.isValidObjectId(req.params.bookId)) {
+        if (!validate.isValidObjectId(req.params.bookId.trim())) {
             return res.status(400).send({ status: false, message: "bookId is not valid" })
         }
 
-        if (!validate.isValidObjectId(req.params.reviewId)) {
+        if (!validate.isValidObjectId(req.params.reviewId.trim())) {
             return res.status(400).send({ status: false, message: "reviewId is not valid" })
         }
 
@@ -135,8 +135,8 @@ const updateReview = async (req, res) => {
 
     try {
 
-        const reviewID = req.params.reviewId
-        const bookId = req.params.bookId
+        const reviewID = req.params.reviewId.trim()
+        const bookId = req.params.bookId.trim()
         let dataToUpdate = req.body
         let updateQuery = {}
 
