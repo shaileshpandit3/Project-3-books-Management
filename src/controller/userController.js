@@ -92,11 +92,11 @@ const loginUser = async function (req, res) {
         let userName = req.body.email;
         let password = req.body.password;
         if (!userName || !password)
-            return res.status(401).send({ status: false, message: "Username or the password is not entered" });
+            return res.status(400).send({ status: false, message: "Username or the password is not entered" });
 
         let user = await userModel.findOne({ email: userName, password: password });
         if (!user)
-            return res.status(400).send({ status: false, message: "Username or the password is not corerct" });
+            return res.status(401).send({ status: false, message: "Username or the password is not corerct" });
 
         let token = jwt.sign({ userId: user._id.toString() }, "this-is-aSecretTokenForLogin", { expiresIn: "1800s" })
 
