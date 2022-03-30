@@ -7,7 +7,6 @@ const reviewModel = require('../models/reviewModel')
 const { default: mongoose } = require('mongoose')
 
 
-
 /////////       CREATE BOOK      //////////
 
 const createBook = async (req, res) => {
@@ -176,6 +175,7 @@ const getBookWithreview = async (req, res) => {
 
 let updateBook = async function (req, res) {
     try {
+        let book_id = req.params.bookId
         if (!validate.isValidObjectId(book_id)) {
             return res.status(400).send({ status: false, msg: "Please enter a valid book Id" })
         }
@@ -209,9 +209,6 @@ let updateBook = async function (req, res) {
             }
         }
         if (Object.keys(req.body).includes('ISBN')) {
-            if (!validate.isValid(req.body.ISBN)) {
-                return res.status(400).send({ status: false, message: " ISBN Is Required" })
-            }
             if (!validate.isValidISBN(req.body.ISBN)) {
                 return res.status(400).send({ status: false, message: "Invalid ISBN Enterd" })
             }
