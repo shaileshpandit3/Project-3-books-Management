@@ -40,6 +40,7 @@ const createUser = async function (req, res) {
         }
         let withoutCountryCode = phone.substring(3)
         let withCountryCode = '+91' + phone
+
         const isPhoneAlreadyUsed = await userModel.findOne({ phone: { $in: [phone, withoutCountryCode, withCountryCode] } });
         if (isPhoneAlreadyUsed) {
             res.status(400).send({ status: false, message: `${phone}  is already registered` })
