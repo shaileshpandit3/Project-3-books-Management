@@ -141,10 +141,10 @@ const updateReview = async (req, res) => {
             { $set: updateQuery },
             { new: true })
 
-            let finalReview = { ...updatedReview.toObject() }
-            delete finalReview.createdAt
-            delete finalReview.updatedAt
-            delete finalReview.__v
+        let finalReview = { ...updatedReview.toObject() }
+        delete finalReview.createdAt
+        delete finalReview.updatedAt
+        delete finalReview.__v
         return res.status(200).send({ status: true, message: "Success", Data: { ...isBook.toObject(), reviewsData: [finalReview] } })
 
     } catch (error) {
@@ -170,12 +170,11 @@ const deleteReview = async (req, res) => {
             return res.status(400).send({ status: false, message: 'Book not exist ' })
         }
         const deleteReview = await reviewModel.findOneAndUpdate({ _id: req.params.reviewId, isDeleted: false }, { isDeleted: true })
-      
         if (deleteReview) {
             if (deleteReview['bookId'] != req.params.bookId) {
                 return res.status(400).send({ status: false, message: "This review dosent belong To given Book Id" })
             }
-            let revCount = await reviewModel.find({bookId:req.params.bookId,isDeleted:false}).count()
+            let revCount = await reviewModel.find({ bookId: req.params.bookId, isDeleted: false }).count()
             await bookModel.findByIdAndUpdate({ _id: req.params.bookId }, { reviews: revCount })
             return res.status(200).send({ status: true, message: "review is deleted successfully" })
         }
