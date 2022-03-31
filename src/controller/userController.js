@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken')
 
 const createUser = async function (req, res) {
     let requestBody = req.body;
-    // try {
+    try {
 
         if (!validate.isValidRequestBody(requestBody)) {
             res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide user details' })
@@ -75,9 +75,9 @@ const createUser = async function (req, res) {
         }
         let user = await userModel.create(req.body)
         return res.status(201).send({ status: true, message: 'Success', data: user })
-    // } catch (error) {
-    //     res.status(500).send({ status: false, msg: error.message })
-    // }
+    } catch (error) {
+        res.status(500).send({ status: false, msg: error.message })
+    }
 }
 
 //////  USER LOGIN  /////////////
