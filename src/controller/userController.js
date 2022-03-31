@@ -99,7 +99,7 @@ const loginUser = async function (req, res) {
         return res.status(201).send({ status: true, message: 'Success', data: token });
 
     } catch (error) {
-        res.status(500).send({ status: false, message: error.message })
+        res.status(401).send({ status: false, message: "Please login again" })
     }
 }
 
