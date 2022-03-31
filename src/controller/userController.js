@@ -9,11 +9,13 @@ const jwt = require('jsonwebtoken')
 const createUser = async function (req, res) {
     let requestBody = req.body;
     try {
+
         if (!validate.isValidRequestBody(requestBody)) {
             res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide user details' })
             return
         }
         const { title, name, phone, email, password, address } = requestBody
+
         if (!validate.isValid(title)) {
             res.status(400).send({ status: false, message: 'Title is required' })
             return
@@ -22,6 +24,7 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, message: `Title should be among Mr, Mrs, Miss ` })
             return
         }
+
         if (!validate.isValid(name)) {
             res.status(400).send({ status: false, message: 'name is required' })
             return
@@ -36,6 +39,7 @@ const createUser = async function (req, res) {
         }
         let withoutCountryCode = phone.substring(3)
         let withCountryCode = '+91' + phone
+
         const isPhoneAlreadyUsed = await userModel.findOne({ phone: { $in: [phone, withoutCountryCode, withCountryCode] } });
         if (isPhoneAlreadyUsed) {
             res.status(400).send({ status: false, message: `${phone}  is already registered` })
@@ -45,11 +49,13 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, message: `Email is required` })
             return
         }
+
         if (!validate.isValidEmail(email.trim())) {
             res.status(400).send({ status: false, message: `Email should be a valid email address` })
             return
         }
         const isEmailAlreadyUsed = await userModel.findOne({ email });
+
         if (isEmailAlreadyUsed) {
             res.status(400).send({ status: false, message: `${email}  is already registered` })
             return
